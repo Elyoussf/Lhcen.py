@@ -1,46 +1,44 @@
-matrix=[['X','X','X','X'],['X','X','X','X'],['X','X','X','X'],['X','X','X','X']]
-def findNeighbors(position,container,matrix,visited):
-    i = position[0]
-    j = position[1]
-    if (i+1<9 and matrix[i+1][j]=="X" and (i+1,j) not in visited):
-        container.append((i+1,j))
-        visited.append((i+1,j))
-        if (j+1<9 and matrix[i+1][j+1]=="X" and (i+1,j+1) not in visited):
-            container.append((i+1,j+1))
-            visited.append((i+1,j+1))
-        if (-1<j-1 and matrix[i+1][j-1]=="X" and (i+1,j-1) not in visited):
-            container.append((i+1,j-1))
-            visited.append((i+1,j-1))
-        
+matrix = [['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+          ['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+          ['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+          ['X', ' ', ' ', ' ', ' ', ' ', 'X', 'X', 'X'],
+          [' ', 'X', ' ', ' ', ' ', ' ', 'X', 'X', 'X'],
+          ['X', ' ', ' ', ' ', ' ', ' ', 'X', 'X', 'X'],
+          [' ', 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+          ['X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+          [' ', 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ']]
 
-    if (-1<i-1 and matrix[i-1][j]=="X" and (i-1,j) not in visited):
-        container.append((i-1,j))
-        visited.append((i-1,j))
-        if (j+1<9 and matrix[i-1][j+1]=="X" and (i-1,j+1) not in visited):
-            container.append((i-1,j+1))
-            visited.append((i-1,j+1))
-        if (-1<j-1 and matrix[i-1][j-1]=="X" and (i-1,j-1) not in visited):
-            container.append((i-1,j-1))
-            visited.append((i-1,j-1))
+def find_neighbors(position, matrix, visited):
+    i, j = position
+    neighbors = []
 
-    if (j+1<9 and matrix[i][j+1]=="X" and (i,j+1) not in visited):
-            container.append((i,j+1))
-            visited.append((i,j+1))
-    if (-1<j-1 and matrix[i][j-1]=="X" and (i,j-1) not in visited):
-            container.append((i-1,j-1))
-            visited.append((i-1,j-1))
-    return (container,visited)
-    
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1)]
+
+    for di, dj in directions:
+        ni, nj = i + di, j + dj
+        if 0 <= ni < 9 and 0 <= nj < 9 and matrix[ni][nj] == 'X' and (ni, nj) not in visited:
+            neighbors.append((ni, nj))
+            visited.add((ni, nj))
+
+    return neighbors, visited
+
 def dfs(start):
-    visited=[]
-    neighbors=[]
-    queue=[start]
-    while (queue):
-        current=queue.pop(0)
-        if current[0]==8:
-             return True
-        visited.append(current)
-        queue,visited=findNeighbors(current,queue,matrix,visited)
-    return False
-print(dfs((0,0)))
+    visited = set()
+    queue = [start]
 
+    if matrix[start[0]][start[1]] != 'X':
+        return False
+
+    while queue:
+        current = queue.pop(0)
+
+        if current[0] == 8:
+            return True
+
+        visited.add(current)
+        neighbors, visited = find_neighbors(current, matrix, visited)
+        queue.extend(neighbors)
+
+    return False
+
+print(dfs((0, 0)))
